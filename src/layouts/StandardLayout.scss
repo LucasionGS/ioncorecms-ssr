@@ -1,0 +1,263 @@
+.standard-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+.standard-layout__header {
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #444444;
+  padding: 0 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  
+  @media (max-width: 768px) {
+    padding: 0 0.75rem;
+  }
+}
+
+.standard-layout__header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  
+  @media (max-width: 768px) {
+    height: 56px;
+  }
+}
+
+.standard-layout__brand {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.2rem;
+  
+  &:hover {
+    color: #007bff;
+  }
+}
+
+.standard-layout__logo {
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 1px;
+}
+
+.standard-layout__nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.75rem;
+  }
+}
+
+.standard-layout__nav-item {
+  text-decoration: none;
+  color: #cccccc;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  &--admin {
+    background-color: #007bff;
+    color: #ffffff;
+    
+    &:hover {
+      background-color: #0056b3;
+      color: #ffffff;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+.standard-layout__user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+  }
+}
+
+.standard-layout__username {
+  color: #cccccc;
+  font-weight: 500;
+  
+  @media (max-width: 480px) {
+    display: none; // Hide username on very small screens
+  }
+}
+
+.standard-layout__logout-btn {
+  background: none;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 0.375rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+.standard-layout__auth-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.standard-layout__content {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 2rem 1rem;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0.5rem;
+  }
+}
+
+.standard-layout__footer {
+  background-color: #2a2a2a;
+  border-top: 1px solid #444444;
+  padding: 1rem;
+  margin-top: auto;
+}
+
+.standard-layout__footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  color: #999999;
+  font-size: 0.9rem;
+}
+
+// Article content styling for CMS pages
+.standard-layout__content {
+  // Style content within pages
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+  
+  h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    
+    @media (max-width: 768px) {
+      font-size: 1.75rem;
+    }
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  p {
+    color: #cccccc;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  
+  a {
+    color: #007bff;
+    text-decoration: none;
+    
+    &:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+  }
+  
+  ul, ol {
+    color: #cccccc;
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  blockquote {
+    border-left: 4px solid #007bff;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    font-style: italic;
+    color: #cccccc;
+  }
+  
+  code {
+    background-color: #2a2a2a;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', monospace;
+    color: #ffffff;
+  }
+  
+  pre {
+    background-color: #2a2a2a;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+}

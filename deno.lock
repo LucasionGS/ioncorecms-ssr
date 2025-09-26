@@ -31,6 +31,7 @@
     "npm:socket.io-client@^4.8.1": "4.8.1",
     "npm:socket.io@^4.8.1": "4.8.1",
     "npm:typescript@~5.9.2": "5.9.2",
+    "npm:vite@7.1.7": "7.1.7_@types+node@24.5.2_sass-embedded@1.93.2_picomatch@4.0.3",
     "npm:vite@^7.1.5": "7.1.7_@types+node@24.5.2_sass-embedded@1.93.2_picomatch@4.0.3"
   },
   "jsr": {

@@ -34,11 +34,11 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          socket: ['socket.io-client']
-        }
+        // manualChunks: {
+        //   vendor: ['react', 'react-dom'],
+        //   router: ['react-router-dom'],
+        //   socket: ['socket.io-client']
+        // }
       }
     }
   },

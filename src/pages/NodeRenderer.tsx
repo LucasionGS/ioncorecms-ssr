@@ -2,12 +2,16 @@ import React, { Suspense } from 'react'
 import NodeTypeRegistry from '../registries/NodeTypeRegistry.ts'
 import { useParams } from 'react-router-dom';
 
-export default function NodeRenderer() {
+export default function NodeRenderer(props: {
+  serverNodeData?: any;
+  serverNodeType?: string;
+}) {
+  const { serverNodeData, serverNodeType } = props;
   const params = useParams();
   
-  const [nodeData, setNodeData] = React.useState<any>(null);
-  const [nodeType, setNodeType] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const [nodeData, setNodeData] = React.useState<any>(serverNodeData ?? null);
+  const [nodeType, setNodeType] = React.useState<string | null>(serverNodeType ?? null);
+  const [loading, setLoading] = React.useState(serverNodeData && serverNodeType ? false : true);
   const [error, setError] = React.useState<string | null>(null);
   
   React.useEffect(() => {

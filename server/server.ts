@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises'
 import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
@@ -5,6 +6,7 @@ import cors from "cors";
 import process from "node:process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { type ViteDevServer } from 'vite'
 import ApiController from "./controllers/ApiController.ts";
 import MonitoringService from "./services/MonitoringService.ts";
 import "./core/NodeRegistry.ts";
@@ -17,6 +19,12 @@ const httpServer = createServer(app);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isProduction = process.env.NODE_ENV === 'production';
+const base = process.env.BASE || '/';
+
+// Cached production assets
+const templateHtml = isProduction
+  ? await fs.readFile(path.join(__dirname, '../dist/client/index.html'), 'utf-8')
+  : '';
 
 const io = new Server(httpServer, {
   cors: {
@@ -57,24 +65,59 @@ app.use((req, _res, next) => {
   next();
 });
 
+// Add Vite or respective production middlewares
+let vite: ViteDevServer;
+if (!isProduction) {
+  const { createServer } = await import('vite')
+  vite = await createServer({
+    server: { middlewareMode: true },
+    appType: 'custom',
+    base,
+  })
+  app.use(vite.middlewares)
+} else {
+  const compression = (await import('compression')).default
+  const sirv = (await import('sirv')).default
+  app.use(compression())
+  app.use(base, sirv(path.join(__dirname, '../dist/client'), { extensions: [] }))
+}
+
 // Routes
 app.use("/api", ApiController.router);
 
-// Serve static files in production
-if (isProduction) {
-  const staticPath = path.join(__dirname, '../client/dist');
-  app.use(
-    express.static(staticPath),
-    // Serve index.html for the root path
-    (_req, res) => {
-      res.sendFile(path.join(staticPath, 'index.html'));
+// Serve HTML with SSR
+app.use('*all', async (req, res) => {
+  try {
+    const url = req.originalUrl.replace(base, '')
+
+    let template: string
+    let render: typeof import('../src/entry-server.tsx').render
+    if (!isProduction) {
+      // Always read fresh template in development
+      template = await fs.readFile(path.join(__dirname, '../index.html'), 'utf-8')
+      template = await vite.transformIndexHtml(url, template)
+      render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render
+    } else {
+      template = templateHtml
+      // @ts-ignore Generated file, will work for production
+      render = (await import(path.join(__dirname, '../dist/server/entry-server.js'))).render
     }
-  );
-} else {
-  app.get("/", (_req, res) => {
-    res.send("Hello World! Development mode - use Vite dev server for frontend.");
-  });
-}
+
+    const rendered = await render(url)
+
+    const html = template
+      .replace(`<!--app-head-->`, rendered.head ?? '')
+      .replace(`<!--app-html-->`, rendered.html ?? '')
+
+    res.status(200).set({ 'Content-Type': 'text/html' }).send(html)
+  } catch (e: unknown) {
+    if (vite && e instanceof Error) {
+      vite.ssrFixStacktrace(e)
+    }
+    console.log(e instanceof Error ? e.stack : String(e))
+    res.status(500).end(e instanceof Error ? e.stack : String(e))
+  }
+})
 
 // Socket.IO connection handling
 io.on("connection", (socket) => {

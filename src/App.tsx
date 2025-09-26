@@ -16,7 +16,7 @@ import './App.scss';
 import NodeRenderer from './pages/NodeRenderer.tsx';
 import StandardLayout from './layouts/StandardLayout.tsx';
 
-function App() {
+function App(serverProps: Record<string, any> = {}): JSX.Element {
   let Router: (props: any) => JSX.Element;
   if (import.meta.env.SSR) {
     Router = (props: StaticRouterProviderProps) => <StaticRouter location="/" {...props} />;
@@ -57,7 +57,7 @@ function App() {
               <SocketProvider>
                 <StandardLayout>
                   <Routes>
-                    <Route path="/*" Component={NodeRenderer} />
+                    <Route path="/*" element={<NodeRenderer serverNodeData={serverProps?.nodeData} serverNodeType={serverProps?.nodeType} />} />
                   </Routes>
                 </StandardLayout>
               </SocketProvider>

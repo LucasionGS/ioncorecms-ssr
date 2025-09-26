@@ -44,7 +44,6 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: +(process.env.CLIENT_PORT || 5173),
     proxy: {
       // Specific proxy for file uploads to handle FormData properly
       '/api/servers/.*/mods': {
@@ -60,12 +59,12 @@ export default defineConfig({
         },
       },
       // General API proxy
-      '/api': {
-        target: `http://localhost:${process.env.INTERNAL_PORT || 3174}`,
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path,
-      },
+      // '/api': {
+      //   target: `http://localhost:${process.env.INTERNAL_PORT || 3174}`,
+      //   changeOrigin: true,
+      //   secure: false,
+      //   rewrite: (path) => path,
+      // },
       '/phpmyadmin': {
         target: "http://phpmyadmin:80",
         changeOrigin: true,

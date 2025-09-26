@@ -1,0 +1,49 @@
+services:
+  ioncore:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env
+    working_dir: /app
+    volumes:
+      - .:/app/.
+      - node_modules:/app/node_modules
+      - uploads:/app/uploads
+
+    ports:
+      - "${PORT:-3174}:${INTERNAL_PORT:-3174}"
+      - "9229:9229"  # Debug port for Deno
+      - "25565-25664:25565-25664"  # Minecraft server port range (100 ports)
+    depends_on:
+      - database
+  
+  database:
+    image: mariadb:latest
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    env_file:
+      - .env
+    environment:
+      - PMA_HOST=${DB_HOST}
+      - PMA_PORT=${DB_PORT}
+      - PMA_USER=${DB_USERNAME}
+      - PMA_PASSWORD=${DB_PASSWORD}
+      - PMA_ARBITRARY=1
+      - PMA_ABSOLUTE_URI=http://localhost:${PORT:-3174}/phpmyadmin/
+    depends_on:
+      - database
+
+volumes:
+  node_modules:
+    driver: local
+  uploads:
+    driver: local

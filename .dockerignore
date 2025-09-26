@@ -1,0 +1,41 @@
+# Node modules (will be installed in container)
+**/node_modules
+
+# Build outputs (will be generated in container)
+**/dist
+**/build
+
+# Development files
+**/.env.local
+**/.env.development
+docker-compose.dev.yml
+Dockerfile.dev
+
+# Git files
+.git
+.gitignore
+
+# Documentation
+README.md
+docs/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Coverage reports
+coverage/
+
+# Temporary files
+tmp/
+temp/

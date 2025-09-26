@@ -2,11 +2,11 @@
   "nodeModulesDir": "auto",
   "type": "module",
   "tasks": {
-    "dev": "deno run -A --watch --inspect=0.0.0.0:9229 server.ts",
+    "dev": "deno run -A --watch --inspect=0.0.0.0:9229 server/server.ts",
     "build": "deno task build:client && deno task build:server",
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
-    "preview": "cross-env NODE_ENV=production deno run -A server.ts"
+    "preview": "cross-env NODE_ENV=production deno run -A server/server.ts"
   },
   "imports": {
     "@types/compression": "npm:@types/compression@^1.8.1",

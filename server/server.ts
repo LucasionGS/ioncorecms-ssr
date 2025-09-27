@@ -94,9 +94,21 @@ app.use('*all', async (req, res) => {
     let render: typeof import('../src/entry-server.tsx').render
     if (!isProduction) {
       // Always read fresh template in development
-      template = await fs.readFile(path.join(__dirname, '../index.html'), 'utf-8')
-      template = await vite.transformIndexHtml(url, template)
+      template = await fs.readFile(path.join(__dirname, '../index.html'), 'utf-8');
       render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render
+      
+      // Add all SCSS files to the template
+      
+      let styleHead = '';
+      [...vite.moduleGraph.fileToModulesMap.keys()].forEach((file) => {
+        if (file.endsWith('.css') || file.endsWith('.scss')) {
+          styleHead += `<link rel="stylesheet" href="${file}">`;
+        }
+      });
+
+      template = template.replace("<!--style-head-->", styleHead);
+
+      template = await vite.transformIndexHtml(url, template)
     } else {
       template = templateHtml
       // @ts-ignore Generated file, will work for production

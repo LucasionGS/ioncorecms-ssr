@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { IRouterMatcher, Request, Response, Router } from "express";
 import NodeRegistry from "../core/NodeRegistry.ts";
 
 namespace NodeController {
@@ -12,13 +12,24 @@ namespace NodeController {
     });
   });
 
+  class WebError extends Error {
+    json?: Record<string, unknown>;
+    status: number;
+    constructor(message: string | Record<string, unknown>, status: number) {
+      super(typeof message == "string" ? message as string : JSON.stringify(message));
+      this.json = typeof message == "string" ? undefined : message as Record<string, unknown>;
+      this.status = status;
+    }
+  }
+  
   // New endpoint for subpath-based node routing
-  router.get("/resolve/*splat", async (req, res) => {
+  export const resolveNodeByPath = async (urlPath: string | string[]) => {
     try {
-      const pathSegments: string[] = (req.params as Record<string, string[]>).splat || [];
-      
+      const pathSegments: string[] = Array.isArray(urlPath) ? urlPath : urlPath.split('/').filter(Boolean);
+
       if (pathSegments.length < 1) {
-        return res.status(404).json({ success: false, message: "Invalid path" });
+        // return res.status(404).json({ success: false, message: "Invalid path" });
+        throw new WebError("Invalid path", 404);
       }
 
       // Try to find a node type that matches the path structure
@@ -52,20 +63,44 @@ namespace NodeController {
       }
 
       if (!foundNode) {
-        return res.status(404).json({ success: false, message: "Node not found" });
+        // return res.status(404).json({ success: false, message: "Node not found" });
+        throw new WebError("Node not found", 404);
       }
 
-      res.json({
+      // res.json({
+      //   success: true,
+      //   data: {
+      //     node: foundNode,
+      //     nodeType: matchedNodeType
+      //   }
+      // });
+      return {
         success: true,
         data: {
           node: foundNode,
           nodeType: matchedNodeType
         }
-      });
+      };
     } catch (error) {
       console.error('Error in node resolution:', error);
-      res.status(500).json({ success: false, message: "Internal server error" });
+      // res.status(500).json({ success: false, message: "Internal server error" });
+      if (error instanceof WebError) {
+        throw error;
+      }
+      throw new WebError("Internal server error", 500);
     }
+  };
+  router.get("/resolve/*splat", (req, res) => {
+    const pathSegments: string[] = (req.params as unknown as Record<string, string[]>).splat || [];
+    resolveNodeByPath(pathSegments)
+      .then(result => res.json(result))
+      .catch((error: WebError) => {
+        if (error.json) {
+          res.status(error.status).json({ success: false, ...error.json });
+        } else {
+          res.status(error.status).json({ success: false, message: error.message });
+        }
+      });
   });
 
   router.get("/:nodeType", async (req, res) => {
